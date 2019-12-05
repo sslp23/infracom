@@ -25,7 +25,7 @@ def lidaCliente(conexao, endereco, usr):
                 conexao.send(b'Tchau!')
                 
                 #avisando que o usuario saiu
-                msg = usr + ' saiu do chat!' 
+                msg = '\n' + usr + ' saiu do chat!' 
                 msgb = bytes(msg, 'utf-8')
                 broadcast(msgb, conexao)
                 
@@ -60,6 +60,11 @@ def main():
         data = conexao.recv(1024)
         usr = data.decode("utf-8")
         print("%s conectou"%(data.decode("utf-8")))
+
+        #avisando que o usr entrou
+        msg = '\n' + usr + ' entrou do chat!' 
+        msgb = bytes(msg, 'utf-8')
+        broadcast(msgb, conexao)
 
         thread.start_new_thread(lidaCliente, (conexao,endereco,usr))
     
