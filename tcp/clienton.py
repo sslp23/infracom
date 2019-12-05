@@ -3,28 +3,34 @@ import threading
 from threading import Thread
 import select
 import sys
+import time
+
+ok = 0#semaforo
 
 #defines
 serverHost = 'localhost'
 serverPort = 5000
-ok = 0 #semaforo
+
 
 def sendmsg(sock):
+    global ok
     msg = ' '
     while msg != 's': #tratando o envio da mensagem    
         msg = input('-> ')
         msgb = bytes(msg, 'utf-8') #convertendo string pra byte
         sock.send(msgb) #reenvia a mensagem
     ok = 1
+    print(ok)
+    return
 
 def rcvmsg(sock):
+    global ok
     while True:
         try:
             data = sock.recv(1024) #recebe a mensagem do server de que teve uma mensagem recebida
             print(data.decode("utf-8"), '\n-> ', end='') 
             if ok == 1:
-                print(ok)
-                break
+                return
         except OSError:
             break
 
