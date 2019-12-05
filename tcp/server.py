@@ -23,6 +23,13 @@ def lidaCliente(conexao, endereco, usr):
             if data.decode() == 's':
                 print("%s desconectou"%(usr))
                 conexao.send(b'Tchau!')
+                
+                #avisando que o usuario saiu
+                msg = usr + ' saiu do chat!' 
+                msgb = bytes(msg, 'utf-8')
+                broadcast(msgb, conexao)
+                
+                #eliminando o usuario
                 remove(conexao)
                 break
             if not data:

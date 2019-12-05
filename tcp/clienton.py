@@ -20,7 +20,6 @@ def sendmsg(sock):
         msgb = bytes(msg, 'utf-8') #convertendo string pra byte
         sock.send(msgb) #reenvia a mensagem
     ok = 1
-    print(ok)
     return
 
 def rcvmsg(sock):
