@@ -1,4 +1,5 @@
 from socket import *
+from models.Dns import Dns
 
 serverHost = 'localhost'
 serverPort = 5000
