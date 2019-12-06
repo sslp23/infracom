@@ -42,7 +42,7 @@ class Cliente(Thread):
     
     def run(self):
         conexao = socket(AF_INET, SOCK_DGRAM)
-        conexao.bind((serverHost, serverPort))
+        #conexao.bind(server)
 
         msgb = bytes(self.usr, 'utf-8') #convertendo string pra byte
         conexao.sendto(msgb, server) #reenvia a mensagem
