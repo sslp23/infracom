@@ -57,7 +57,7 @@ class Cliente(Thread):
         
         r_msg.join()
         s_msg.join()
-        sock.close()
+        conexao.close()
 
 def main():
     usr = input('Digite o nome de usuario: ')
