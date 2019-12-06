@@ -1,5 +1,6 @@
 from socket import *
 import _thread as thread
+from models.Dns import Dns
 
 def remove(conexao):
     if conexao in clients:
@@ -41,16 +42,19 @@ def lidaCliente(conexao, endereco, usr):
         
         conexao.close()
 
-host = '' #string vazia = localhost
-port = 5000
-
 sock = socket(AF_INET, SOCK_STREAM)
-sock.bind((host, port))
-sock.listen(5) #recebe no maximo 5
 
 clients = []
 
 def main():
+    dns = Dns(('', 10000))
+    host, port = dns.registerServerAs(input("Digite um endereco válido: "))
+    dns.close()
+    del dns
+    
+    sock.bind((host, port))
+    sock.listen(5) #recebe no maximo 5 visitas
+
     while True:
         conexao, endereco = sock.accept()
         print('Servidor conectado por', endereco)

@@ -4,13 +4,9 @@ from threading import Thread
 import select
 import sys
 import time
+from models.Dns import Dns
 
 ok = 0#semaforo
-
-#defines
-serverHost = 'localhost'
-serverPort = 5000
-
 
 def sendmsg(sock):
     global ok
@@ -63,6 +59,11 @@ class Cliente(threading.Thread):
         sock.close()
 
 def main():
+    dns = Dns(('', 10000))
+    serverHost, serverPort = dns.getIPFrom(input("Digite um endereco válido: "))
+    dns.close()
+    del dns
+
     usr = input('Digite o nome de usuario: ')
     c = int(input('Digite seu ID: '))
     cliente = Cliente(c, usr, serverHost, serverPort)
