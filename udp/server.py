@@ -4,11 +4,40 @@ host = ""
 port = 5000
 dest = (host, port)
 
-def broadcast(endereco, enderecos, server, msgb): #enviando para todos os clients
+def sendPkt(mensagem, conexao, endereco): #enviando o pacot
+    for i in range(0, len(mensagem), 1):
+        pkt = str(mensagem[i])+str(i)+str(len(mensagem))
+        pkt = bytes(pkt, 'utf-8')
+        conexao.sendto(pkt, endereco)
+
+def receiveMsg(server): #recebendo a mensagem
+    data, endereco = server.recvfrom(1024)
+    data = data.decode('utf-8')
+    data = tuple(data)
+    msg = data[0]
+    
+    print(data) #recebendo os pacotes
+    if len(data)< 3:
+        tam = int(data[2])
+    else:
+        tam = ' '
+        for i in range(2, len(data), 1):
+            tam = tam+data[i] 
+        tam = int(tam)
+
+    for i in range(1, tam, 1):
+        data, endereco = server.recvfrom(1024)
+        data = data.decode('utf-8')
+        data = tuple(data)
+        msg = msg+data[0]
+
+    return msg, endereco
+
+def broadcast(endereco, enderecos, server, msg): #enviando para todos os clients
     for end in enderecos:
         if end != endereco:
             print(end)
-            server.sendto(msgb, end)
+            sendPkt(msg, server, end)
 
 def remove(endereco, enderecos):
     if endereco in enderecos:
@@ -23,36 +52,35 @@ def main():
     usuarios = [] #vetor que guarda o nome dos usuarios
 
     while True:
-        data, endereco = server.recvfrom(1024)
+        data, endereco = receiveMsg(server)
         if not (endereco in enderecos):
             enderecos.append(endereco)
-            usuarios.append(data.decode("utf-8")) #salvando nome e endereco de quem entrou no chat
+            usuarios.append(data) #salvando nome e endereco de quem entrou no chat
 
-            print("%s conectou"%(data.decode("utf-8")))
-            server.sendto(b'Bem-vindo!', endereco) #avisando ao endereco que ele entrou
+            print("%s conectou"%(data))
+            sendPkt('Bem-vindo!', server, endereco) #avisando ao endereco que ele entrou
             
-            msg = '\n' + data.decode("utf-8") + ' entrou do chat!'  #avisando que o usuario entrou no chat
+            msg = '\n' + data + ' entrou do chat!'  #avisando que o usuario entrou no chat
             msgb = bytes(msg, 'utf-8')
-            broadcast(endereco, enderecos, server, msgb)
+            broadcast(endereco, enderecos, server, msg)
         else:
-            if data.decode("utf-8") == 's':
+            if data == 's':
                 x = enderecos.index(endereco)
                 print("%s desconectou"%(usuarios[x]))
-                server.sendto(b'Tchau!', endereco)
+                sendPkt('Tchau!', server, endereco)
                 
                 #avisando que o usuario saiu
                 msg = '\n' + usuarios[x] + ' saiu do chat!' 
                 msgb = bytes(msg, 'utf-8')
-                broadcast(endereco, enderecos, server, msgb)
+                broadcast(endereco, enderecos, server, msg)
                 
                 #removendo usuario
                 remove(endereco, enderecos)
                 remove(usuarios[x], usuarios)
             else:
                 x = enderecos.index(endereco)
-                msg = usuarios[x] + ': ' + data.decode("utf-8")
-                msgb = bytes(msg, 'utf-8')
-                broadcast(endereco, enderecos, server, msgb)
+                msg = usuarios[x] + ': ' + data
+                broadcast(endereco, enderecos, server, msg)
 
     # Fechamos o servidor
     server.close()
