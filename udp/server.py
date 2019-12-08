@@ -16,6 +16,11 @@ def receiveMsg(server): #recebendo a mensagem
     data = tuple(data)
     msg = data[0]
     
+    if data[1] == '0':
+        server.sendto(b'ACK0', endereco) #enviando ack0 se recebeu a mensagem correta
+    else:
+        server.sendto(b'ACK1', endereco)
+
     print(data) #recebendo os pacotes
     if len(data)< 3:
         tam = int(data[2])
@@ -24,12 +29,31 @@ def receiveMsg(server): #recebendo a mensagem
         for i in range(2, len(data), 1):
             tam = tam+data[i] 
         tam = int(tam)
-
-    for i in range(1, tam, 1):
+        #print(tam)
+    
+    i=1 #for manual (?)
+    while i < tam:
         data, endereco = server.recvfrom(1024)
         data = data.decode('utf-8')
         data = tuple(data)
         msg = msg+data[0]
+
+        x = str(i)
+        x = len(x)
+        nseq = data[1]
+        if i >= 10:
+            for j in range(2, x+1, 1):
+                nseq = nseq+data[j]
+        
+        nseq = int(nseq)
+        print(nseq)
+        if nseq == i:
+            print('ok')
+            server.sendto(b'ACK0', endereco) #enviando ack0 se recebeu a mensagem correta
+            i = i+1
+        else:
+            server.sendto(b'ACK1', endereco)
+            print(i)
 
     return msg, endereco
 
