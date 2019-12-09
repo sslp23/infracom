@@ -84,7 +84,7 @@ def main():
             print("%s conectou"%(data))
             sendPkt('Bem-vindo!', server, endereco) #avisando ao endereco que ele entrou
             
-            msg = '\n' + data + ' entrou do chat!'  #avisando que o usuario entrou no chat
+            msg = data + ' entrou do chat!'  #avisando que o usuario entrou no chat
             msgb = bytes(msg, 'utf-8')
             broadcast(endereco, enderecos, server, msg)
         else:
@@ -94,7 +94,7 @@ def main():
                 sendPkt('Tchau!', server, endereco)
                 
                 #avisando que o usuario saiu
-                msg = '\n' + usuarios[x] + ' saiu do chat!' 
+                msg = usuarios[x] + ' saiu do chat!' 
                 msgb = bytes(msg, 'utf-8')
                 broadcast(endereco, enderecos, server, msg)
                 
