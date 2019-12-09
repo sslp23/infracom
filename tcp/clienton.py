@@ -6,7 +6,9 @@ import sys
 import time
 from models.Dns import Dns
 
-ok = 0#semaforo
+import uuid
+
+ok = 0#semaforohttps://www.mozilla.org/en-US/privacy/firefox/
 
 def sendmsg(sock):
     global ok
@@ -59,13 +61,13 @@ class Cliente(threading.Thread):
         sock.close()
 
 def main():
-    dns = Dns(('', 10000))
+    dns = Dns(('172.20.4.160', 10000))
     serverHost, serverPort = dns.getIPFrom(input("Digite um endereco válido: "))
     dns.close()
     del dns
 
     usr = input('Digite o nome de usuario: ')
-    c = int(input('Digite seu ID: '))
+    c = int(uuid.uuid1())
     cliente = Cliente(c, usr, serverHost, serverPort)
     cliente.run()
 

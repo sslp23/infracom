@@ -164,7 +164,7 @@ class Cliente(Thread):
 
 def main():
     global server
-    dns = Dns(('', 10000))
+    dns = Dns(('172.22.42.157', 10000))
     serverHost, serverPort = dns.getIPFrom(input("Digite um endereco válido: "))
     dns.close()
     del dns

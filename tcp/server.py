@@ -47,7 +47,7 @@ sock = socket(AF_INET, SOCK_STREAM)
 clients = []
 
 def main():
-    dns = Dns(('', 10000))
+    dns = Dns(('172.20.4.160', 10000))
     host, port = dns.registerServerAs(input("Digite um endereco válido: "))
     dns.close()
     del dns

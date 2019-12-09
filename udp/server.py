@@ -90,7 +90,7 @@ def remove(endereco, enderecos):
         enderecos.remove(endereco)
 
 def main():
-    dns = Dns(('', 10000))
+    dns = Dns(('172.22.42.157', 10000))
     host, port = dns.registerServerAs(input("Digite um endereco válido: "))
     dest = (host, port)
     dns.close()
