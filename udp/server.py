@@ -4,11 +4,35 @@ host = ""
 port = 5000
 dest = (host, port)
 
+def geraErro(mensagem, i):
+    pkt = str(mensagem[i])+'0'+str(len(mensagem))
+    return pkt
+
+def geraPacote(mensagem, i):
+    pkt = str(mensagem[i])+str(i)+str(len(mensagem))
+    return pkt
+
 def sendPkt(mensagem, conexao, endereco): #enviando o pacot
-    for i in range(0, len(mensagem), 1):
-        pkt = str(mensagem[i])+str(i)+str(len(mensagem))
-        pkt = bytes(pkt, 'utf-8')
-        conexao.sendto(pkt, endereco)
+    i = 0
+    ack = 0
+    while i < len(mensagem):
+        if i%7 == 0 and ack == 0:
+            pkt = geraErro(mensagem, i)
+            pkt = bytes(pkt, 'utf-8')
+            conexao.sendto(pkt, endereco)
+            #print('oi')
+        else:
+            pkt = str(mensagem[i])+str(i)+str(len(mensagem))
+            pkt = bytes(pkt, 'utf-8')
+            conexao.sendto(pkt, endereco)
+            ack = 0
+
+        #verificando se recebeu a mensagem correta:
+        data, end = conexao.recvfrom(1024)
+        if data.decode('utf-8') == 'ACK0':
+            i = i+1
+        else:
+            ack = 1
 
 def receiveMsg(server): #recebendo a mensagem
     data, endereco = server.recvfrom(1024)
@@ -36,7 +60,6 @@ def receiveMsg(server): #recebendo a mensagem
         data, endereco = server.recvfrom(1024)
         data = data.decode('utf-8')
         data = tuple(data)
-        msg = msg+data[0]
 
         x = str(i)
         x = len(x)
@@ -51,6 +74,7 @@ def receiveMsg(server): #recebendo a mensagem
             print('ok')
             server.sendto(b'ACK0', endereco) #enviando ack0 se recebeu a mensagem correta
             i = i+1
+            msg = msg+data[0]
         else:
             server.sendto(b'ACK1', endereco)
             print(i)

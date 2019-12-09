@@ -108,21 +108,38 @@ def receiveMsg(conexao): #recebendo a mensagem
         msg = data[0]
 
         #print(data) #recebendo os pacotes
-        if len(data)< 3:
+        if len(data) < 3:
             tam = int(data[2])
         else:
             tam = ' '
             for i in range(2, len(data), 1):
                 tam = tam+data[i] 
             tam = int(tam)
-
-        for i in range(1, tam, 1):
+        
+        conexao.sendto(b'ACK0', server)
+        i=1
+        while i < tam:
             data, endereco = conexao.recvfrom(1024)
             data = data.decode('utf-8')
             data = tuple(data)
-            msg = msg+data[0]
+
+            nseq = data[1]
+            if i >= 10:
+                x = str(i)
+                x = len(x)
+                for j in range(2, x+1, 1):
+                    nseq = nseq+data[j]
+            
+            nseq = int(nseq)
+            if nseq == i:
+                conexao.sendto(b'ACK0', server) #enviando ack0 se recebeu a mensagem correta
+                i = i+1
+                msg = msg+data[0]
+            else:
+                conexao.sendto(b'ACK1', server)
 
     return msg, endereco
+
 
 def sendmsg(conexao):
     global ok
