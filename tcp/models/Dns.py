@@ -30,6 +30,7 @@ class Dns():
         dor, adr = self.sock.recvfrom(1024)
         dor = int(dor.decode('utf-8'))
         return (ip, dor)
+        #return('localhost', 5000)
 
     def close(self):
         self.sock.close()
