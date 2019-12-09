@@ -1,8 +1,6 @@
 from socket import *
+from models.Dns import Dns
 
-host = ""
-port = 5000
-dest = (host, port)
 
 def geraErro(mensagem, i):
     pkt = str(mensagem[i])+'0'+str(len(mensagem))
@@ -92,6 +90,12 @@ def remove(endereco, enderecos):
         enderecos.remove(endereco)
 
 def main():
+    dns = Dns(('', 10000))
+    host, port = dns.registerServerAs(input("Digite um endereco válido: "))
+    dest = (host, port)
+    dns.close()
+    del dns
+    
     server = socket(AF_INET, SOCK_DGRAM)
     server.bind(dest)
     print("Servidor iniciado")
